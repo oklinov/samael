@@ -1,4 +1,4 @@
-use crate::attribute::{Attribute, AttributeValue};
+use crate::attribute::{Attribute, AttributeValue, AttributeValueValue};
 use crate::schema::{
     Assertion, AttributeStatement, AudienceRestriction, AuthnContext, AuthnContextClassRef,
     AuthnStatement, Conditions, Issuer, Response, Status, StatusCode, Subject, SubjectConfirmation,
@@ -50,7 +50,7 @@ fn build_attributes(formats_names_values: &[ResponseAttribute]) -> Vec<Attribute
             name_format: attr.required_attribute.format.clone(),
             values: vec![AttributeValue {
                 attribute_type: Some("xs:string".to_string()),
-                value: Some(attr.value.to_string()),
+                value: Some(AttributeValueValue::String(attr.value.to_string())),
             }],
         })
         .collect()

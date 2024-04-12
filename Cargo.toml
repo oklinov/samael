@@ -17,6 +17,7 @@ doctest = false
 crate-type = ["staticlib", "rlib"]
 
 [features]
+default = ["xmlsec"]
 xmlsec = ["libc", "lazy_static", "libxml"]
 
 [build-dependencies]

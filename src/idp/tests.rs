@@ -1,10 +1,22 @@
 use super::*;
 use chrono::prelude::*;
 
+use crate::attribute::AttributeValue;
 use crate::crypto::verify_signed_xml;
 use crate::idp::sp_extractor::{RequiredAttribute, SPMetadataExtractor};
 use crate::idp::verified_request::UnverifiedAuthnRequest;
 use crate::service_provider::ServiceProvider;
+
+#[test]
+fn test_name_id() {
+    let xml = r#"<saml:AttributeValue> <saml:NameID NameQualifier="https://idp.ro.vutbr.cz/saml2/idp" SPNameQualifier="test.slides" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">3c56eaae708714d3eae97e4ca6779766d9c18f03 </saml:NameID> </saml:AttributeValue>"#;
+    let val: AttributeValue = quick_xml::de::from_str(xml).unwrap();
+    println!("{:?}", val);
+
+    let xml = r#"<saml:AttributeValue>3c56eaae708714d3eae97e4ca6779766d9c18f03</saml:AttributeValue>"#;
+    let val: AttributeValue = quick_xml::de::from_str(xml).unwrap();
+    println!("{:?}", val);
+}
 
 #[test]
 fn test_self_signed_authn_request() {

@@ -4,7 +4,17 @@ use serde::Deserialize;
 use std::fmt::Debug;
 use std::io::Cursor;
 
+use crate::schema::NameID;
+
 const ATTRIBUTE_VALUE_NAME: &str = "saml2:AttributeValue";
+
+#[derive(Clone, Debug, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd)]
+pub enum AttributeValueValue {
+    #[serde(rename = "$text")]
+    String(String),
+    #[serde(rename = "NameID")]
+    NameId(NameID)
+}
 
 #[derive(Clone, Debug, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct AttributeValue {
@@ -12,7 +22,7 @@ pub struct AttributeValue {
     #[serde(alias = "@type")]
     pub attribute_type: Option<String>,
     #[serde(rename = "$value")]
-    pub value: Option<String>,
+    pub value: Option<AttributeValueValue>,
 }
 
 impl AttributeValue {
@@ -51,6 +61,10 @@ impl TryFrom<&AttributeValue> for Event<'_> {
         writer.write_event(Event::Start(root))?;
 
         if let Some(value) = &value.value {
+            let value = match value {
+                AttributeValueValue::String(value) => value,
+                AttributeValueValue::NameId(name_id) => &name_id.value,
+            };
             writer.write_event(Event::Text(BytesText::from_escaped(value)))?;
         }
 
